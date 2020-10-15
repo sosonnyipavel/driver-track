@@ -1,6 +1,6 @@
 import React from 'react';
 import Auth from './Auth';
-import EquipmentsList from './EquipmentsList';
+import Manager from './Manager';
 import history from '../history';
 import { Router, Route, Switch } from 'react-router-dom';
 
@@ -10,7 +10,7 @@ const App = () => {
             <Router history={history}>
                 <div>
                     <Switch>
-                        <Route path="/" exact component={EquipmentsList} />
+                        <Route path="/" exact component={Manager} />
                         <Route exact path='/signin' component ={Auth} />
                     </Switch>
                 </div>

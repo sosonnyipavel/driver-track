@@ -7,3 +7,4 @@ export const logInRoutine = createThunkRoutine('LOG_IN');
 export const logOutRoutine = createThunkRoutine('LOG_OUT');
 export const getEquipmentsRoutine = createThunkRoutine('GET_EQUIPMENTS');
 export const editEquipmentsRoutine = createThunkRoutine('EDIT_EQUIPMENTS');
+export const deleteEquipmentsRoutine = createThunkRoutine('DELETE_EQUIPMENTS');

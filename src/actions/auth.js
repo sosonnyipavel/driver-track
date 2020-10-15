@@ -8,6 +8,7 @@ export const logIn = getThunkActionCreator (
     const response = await sessions.post('/sessions', { username: formValues.email, password: formValues.password, session: history.location });
     localStorage.setItem('token', response.data.session.access_token);
     history.push('/');
+    return response;
 });
 
 export const logOut = getThunkActionCreator ( 
