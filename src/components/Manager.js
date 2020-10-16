@@ -1,6 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { getEquipments, deleteEquipments} from '../actions/equipments';
+import { getEquipments, deleteEquipments } from '../actions/equipments';
 import { logOut } from '../actions/auth';
 import { showError } from '../actions/showError';
 import MaterialSnackbar from './MaterialSnackbar';
@@ -36,17 +36,13 @@ class Manager extends React.Component {
         this.props.logOut(token).catch((error) => this.props.showError(error));
     }
 
-    buttonEdit = () => {
-        this.props.showModal(true);
-    }
-
     checkEquipments(){
         if(this.props.equipmentsData){
             return(
                 <EquipmentsList 
                     equipmentsData={this.props.equipmentsData}
                     paginationData={this.props.paginationData}
-                    deleteEquipments={this.props.deleteEquipments}
+                    deleteEquipments={this.props.deleteEquipments}                 
                 />
             );
         }
@@ -54,7 +50,7 @@ class Manager extends React.Component {
     
     render() {
         return (
-            <div style={{ margin: 100}}>
+            <div style={{ margin: 150}}>
                 {this.checkEquipments()}
                 <div style={{marginTop: 20, textAlign: 'center'}}>
                     <Button 

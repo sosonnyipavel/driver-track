@@ -1,4 +1,4 @@
-import { getEquipmentsRoutine, editEquipmentsRoutine, deleteEquipmentsRoutine  } from '../actions';
+import { getEquipmentsRoutine, editEquipmentsRoutine, deleteEquipmentsRoutine, addEquipmentsRoutine  } from '../actions';
 const INITIAL_STATE = {
     equipmentsData: null,
     paginationData: null
@@ -16,6 +16,9 @@ export default (state = INITIAL_STATE, action) => {
         return {...state};
     }
     if(editEquipmentsRoutine.isSuccessAction(action)){
+        return {...state};
+    }
+    if(addEquipmentsRoutine.isSuccessAction(action)){
         return {...state};
     }
     return state;

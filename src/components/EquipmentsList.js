@@ -19,6 +19,8 @@ import Tooltip from '@material-ui/core/Tooltip';
 import DeleteIcon from '@material-ui/icons/Delete';
 import EditIcon from '@material-ui/icons/Edit';
 import AddCircleIcon from '@material-ui/icons/AddCircle';
+import ModalEdit from '../components/ModalEdit';
+import ModalAdd from '../components/ModalAdd';
 
 
 function descendingComparator(a, b, orderBy) {
@@ -127,10 +129,13 @@ const useToolbarStyles = makeStyles((theme) => ({
   },
 }));
 
-
 const EnhancedTableToolbar = (props) => {
   const classes = useToolbarStyles();
-  const { numSelected, selected, deleteEquipments } = props;
+  const [modal, setModal] = React.useState(false);
+  const [modalAdd, setModalAdd] = React.useState(false);
+  const [row, setRow] = React.useState({});
+  const { numSelected, selected, deleteEquipments, rows } = props;
+
   
   const handleClickRow = (event) => {
     if(event){
@@ -138,6 +143,17 @@ const EnhancedTableToolbar = (props) => {
       deleteEquipments(selected[0], token);
     }
     event.preventDefault();
+  }
+
+  const editClick = (event) => {
+    if(event){
+      setModal(!modal);
+      rows.forEach(row => {
+        if (row.id === selected[0]){ 
+          setRow(row);
+        }
+      });
+    }
   }
 
   return (
@@ -156,11 +172,11 @@ const EnhancedTableToolbar = (props) => {
         </Typography>
       )}
 
-      {numSelected > 0 ? (    
+      {numSelected > 0 && numSelected < 2 ? (    
         <div style={{whiteSpace: 'nowrap'}}> 
           <Tooltip title="Edit">
-          <IconButton aria-label="edit">
-            <EditIcon />
+          <IconButton onClick={editClick} aria-label="edit">
+            <EditIcon/>
           </IconButton>
           </Tooltip>
           <Tooltip title="Delete">
@@ -171,13 +187,17 @@ const EnhancedTableToolbar = (props) => {
         </div>
       ) :
         <Tooltip title="Add">
-        <IconButton aria-label="add">
+        <IconButton onClick={() => setModalAdd(!modalAdd)}  aria-label="add">
           <AddCircleIcon />
         </IconButton>
         </Tooltip>
       }
+      <ModalEdit modal={modal} selectedRow={row}/>
+      <ModalAdd modalAdd={modalAdd}/>
     </Toolbar>
+    
   );
+  
 };
 
 EnhancedTableToolbar.propTypes = {
@@ -210,7 +230,6 @@ const useStyles = makeStyles((theme) => ({
 
 export default function EnhancedTable(props) {
   const rows = props.equipmentsData;
-  console.log(rows);
   const classes = useStyles();
   const [order, setOrder] = React.useState('asc');
   const [orderBy, setOrderBy] = React.useState('name');
@@ -270,7 +289,7 @@ export default function EnhancedTable(props) {
   return (
     <div className={classes.root}>
       <Paper className={classes.paper}>
-        <EnhancedTableToolbar numSelected={selected.length} selected={selected} deleteEquipments={props.deleteEquipments} />
+        <EnhancedTableToolbar numSelected={selected.length} selected={selected} rows={rows} deleteEquipments={props.deleteEquipments }/>
         <TableContainer>
           <Table
             className={classes.table}

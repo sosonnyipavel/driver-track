@@ -1,4 +1,4 @@
-import { getEquipmentsRoutine, editEquipmentsRoutine, deleteEquipmentsRoutine } from './index';
+import { getEquipmentsRoutine, editEquipmentsRoutine, deleteEquipmentsRoutine, addEquipmentsRoutine } from './index';
 import { getThunkActionCreator } from 'redux-thunk-routine';
 import sessions from '../api/sessions';
 import history from '../history';
@@ -18,18 +18,28 @@ export const deleteEquipments = (id, token) => async (dispatch) => {
 };
 
 
-export const editEquipments = (token, userEdit) => async (dispatch) => {
-    dispatch(editEquipmentsRoutine.request(token, userEdit));
-    const response = await sessions.patch(`/equipments?access_token=${token}`, 
+export const editEquipments = (id, token, equipment) => async (dispatch) => {
+    dispatch(editEquipmentsRoutine.request(id, token, equipment));
+    const response = await sessions.patch(`/equipments/${id}?access_token=${token}`, 
         {
-            user: 
+            equipment: 
                 {   
-                    first_name: userEdit.userFirstName,
-                    last_name: userEdit.userLastName,
-                    email: userEdit.userEmail,
-                    phone: userEdit.userPhone
+                    name: equipment.name
                 } 
         });
     history.push('/signin');
     return dispatch(editEquipmentsRoutine.success(response));
+};
+
+export const addEquipmets = (token, equipment) => async (dispatch) => {
+    dispatch(addEquipmentsRoutine.request(token, equipment));
+    const response = await sessions.post(`/equipments/?access_token=${token}`, 
+        {
+            equipment: 
+                {   
+                    name: equipment.name
+                } 
+        });
+    history.push('/signin');
+    return dispatch(addEquipmentsRoutine.success(response));
 };

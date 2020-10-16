@@ -1,29 +1,24 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { showError } from '../actions/showError';
-import { editEquipments } from '../actions/equipments';
+import { addEquipmets } from '../actions/equipments';
 import TextField from '@material-ui/core/TextField';
 import Modal from '@material-ui/core/Modal';
 import Button from '@material-ui/core/Button';
 import MaterialSnackbar from './MaterialSnackbar';
 
-class ModalEdit extends React.Component {
+class ModalAdd extends React.Component {
     constructor(props) {
         super(props)
         this.state = { 
             open: false,
-            name: '',
-            id: ''
+            name: ''
         };
     }
 
     componentDidUpdate(prevProps){
-      if(this.props.modal !== prevProps.modal){
-        this.setState({
-          open: true, 
-          name: this.props.selectedRow.name,
-          id: this.props.selectedRow.id
-        })
+      if(this.props.modalAdd !== prevProps.modalAdd){
+        this.setState({ open: true });
       }
     }
     
@@ -38,11 +33,9 @@ class ModalEdit extends React.Component {
       };
 
     handleSubmitYes = () => {
-        if(this.state.name !== this.props.selectedRow.name){
-          const token = localStorage.getItem('token');
-          this.props.editEquipments(this.state.id, token, this.state).catch((error) => this.props.showError(error));
-        }
-        this.handleClose();
+      const token = localStorage.getItem('token');
+      this.props.addEquipmets(token, this.state).catch((error) => this.props.showError(error));
+      this.handleClose();
     }
 
 
@@ -87,4 +80,4 @@ const mapStateToProps = (state) => {
 }
 
 
-export default connect(mapStateToProps, {  showError, editEquipments })(ModalEdit);
+export default connect(mapStateToProps, {  showError, addEquipmets })(ModalAdd);
