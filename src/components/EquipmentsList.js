@@ -20,7 +20,8 @@ import DeleteIcon from '@material-ui/icons/Delete';
 import EditIcon from '@material-ui/icons/Edit';
 import AddCircleIcon from '@material-ui/icons/AddCircle';
 import ModalEdit from '../components/ModalEdit';
-import ModalAdd from '../components/ModalAdd';
+import ModalCreate from '../components/ModalCreate';
+import history from '../history';
 
 
 function descendingComparator(a, b, orderBy) {
@@ -131,23 +132,24 @@ const useToolbarStyles = makeStyles((theme) => ({
 
 const EnhancedTableToolbar = (props) => {
   const classes = useToolbarStyles();
-  const [modal, setModal] = React.useState(false);
-  const [modalAdd, setModalAdd] = React.useState(false);
+  const [modalEdit, setModalEdit] = React.useState(false);
+  const [modalCreate, setModalCreate] = React.useState(false);
   const [row, setRow] = React.useState({});
-  const { numSelected, selected, deleteEquipments, rows } = props;
+  const { numSelected, selected, deleteEquipment, rows, error } = props;
 
   
   const handleClickRow = (event) => {
     if(event){
-      const token = localStorage.getItem('token');
-      deleteEquipments(selected[0], token);
+        deleteEquipment(selected[0])
+        .then( () => history.push('/signin'))
+        .catch( (e) => error(e) );
     }
     event.preventDefault();
   }
 
   const editClick = (event) => {
     if(event){
-      setModal(!modal);
+      setModalEdit(!modalEdit);
       rows.forEach(row => {
         if (row.id === selected[0]){ 
           setRow(row);
@@ -187,13 +189,13 @@ const EnhancedTableToolbar = (props) => {
         </div>
       ) :
         <Tooltip title="Add">
-        <IconButton onClick={() => setModalAdd(!modalAdd)}  aria-label="add">
+        <IconButton onClick={() => setModalCreate(!modalCreate)}  aria-label="add">
           <AddCircleIcon />
         </IconButton>
         </Tooltip>
       }
-      <ModalEdit modal={modal} selectedRow={row}/>
-      <ModalAdd modalAdd={modalAdd}/>
+      <ModalEdit modalEdit={modalEdit} selectedRow={row}/>
+      <ModalCreate modalCreate={modalCreate}/>
     </Toolbar>
     
   );
@@ -289,7 +291,13 @@ export default function EnhancedTable(props) {
   return (
     <div className={classes.root}>
       <Paper className={classes.paper}>
-        <EnhancedTableToolbar numSelected={selected.length} selected={selected} rows={rows} deleteEquipments={props.deleteEquipments }/>
+        <EnhancedTableToolbar 
+          numSelected={selected.length} 
+          selected={selected} 
+          rows={rows} 
+          deleteEquipment={props.deleteEquipment}
+          error={props.error}
+        />
         <TableContainer>
           <Table
             className={classes.table}

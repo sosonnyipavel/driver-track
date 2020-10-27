@@ -1,13 +1,14 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { showError } from '../actions/showError';
-import { addEquipmets } from '../actions/equipments';
+import { showError } from '../actions/error';
+import { createEquipment } from '../actions/equipments';
 import TextField from '@material-ui/core/TextField';
 import Modal from '@material-ui/core/Modal';
 import Button from '@material-ui/core/Button';
 import MaterialSnackbar from './MaterialSnackbar';
+import history from '../history';
 
-class ModalAdd extends React.Component {
+class ModalCreate extends React.Component {
     constructor(props) {
         super(props)
         this.state = { 
@@ -17,7 +18,7 @@ class ModalAdd extends React.Component {
     }
 
     componentDidUpdate(prevProps){
-      if(this.props.modalAdd !== prevProps.modalAdd){
+      if(this.props.modalCreate !== prevProps.modalCreate){
         this.setState({ open: true });
       }
     }
@@ -33,8 +34,9 @@ class ModalAdd extends React.Component {
       };
 
     handleSubmitYes = () => {
-      const token = localStorage.getItem('token');
-      this.props.addEquipmets(token, this.state).catch((error) => this.props.showError(error));
+      this.props.createEquipment(this.state.name)
+        .then( () =>  history.push('/signin'))
+        .catch((error) => this.props.showError(error));
       this.handleClose();
     }
 
@@ -67,17 +69,11 @@ class ModalAdd extends React.Component {
             >
               {this.bodyModal()}
             </Modal>
-            <MaterialSnackbar message={this.props.message} />
+            <MaterialSnackbar/>
           </div>
         );
     }
 }
 
-const mapStateToProps = (state) => {
-    return { 
-        message: state.error.errorMessage
-    };
-}
 
-
-export default connect(mapStateToProps, {  showError, addEquipmets })(ModalAdd);
+export default connect(null, {  showError, createEquipment })(ModalCreate);

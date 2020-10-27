@@ -1,45 +1,34 @@
-import { getEquipmentsRoutine, editEquipmentsRoutine, deleteEquipmentsRoutine, addEquipmentsRoutine } from './index';
+import { getEquipmentsRoutine, editEquipmentRoutine, deleteEquipmentRoutine, createEquipmentRoutine } from './index';
 import { getThunkActionCreator } from 'redux-thunk-routine';
 import sessions from '../api/sessions';
-import history from '../history';
 
 
 export const getEquipments = getThunkActionCreator (
     getEquipmentsRoutine, async (token) => {
-    const response = await sessions.get(`/equipments?access_token=${token}`);
-    return response;
+        return await sessions.get(`/equipments?access_token=${token}`);
 });
 
-export const deleteEquipments = (id, token) => async (dispatch) => {
-    dispatch(deleteEquipmentsRoutine.request(id, token));
-    const response = await sessions.delete(`/equipments/${id}?access_token=${token}`);
-    history.push('/signin');
-    return dispatch(deleteEquipmentsRoutine.success(response));
-};
+export const deleteEquipment = getThunkActionCreator(
+    deleteEquipmentRoutine,
+    async (id) => {
+        const token = localStorage.getItem('token');
+        return await sessions.delete(`/equipments/${id}?access_token=${token}`);
+    }
+);
 
 
-export const editEquipments = (id, token, equipment) => async (dispatch) => {
-    dispatch(editEquipmentsRoutine.request(id, token, equipment));
-    const response = await sessions.patch(`/equipments/${id}?access_token=${token}`, 
-        {
-            equipment: 
-                {   
-                    name: equipment.name
-                } 
-        });
-    history.push('/signin');
-    return dispatch(editEquipmentsRoutine.success(response));
-};
+export const editEquipment = getThunkActionCreator( 
+    editEquipmentRoutine,
+    async (equipment) => {
+        const token = localStorage.getItem('token');
+        return await sessions.patch(`/equipments/${equipment.id}?access_token=${token}`, equipment.name)
+    }
+);
 
-export const addEquipmets = (token, equipment) => async (dispatch) => {
-    dispatch(addEquipmentsRoutine.request(token, equipment));
-    const response = await sessions.post(`/equipments/?access_token=${token}`, 
-        {
-            equipment: 
-                {   
-                    name: equipment.name
-                } 
-        });
-    history.push('/signin');
-    return dispatch(addEquipmentsRoutine.success(response));
-};
+export const createEquipment = getThunkActionCreator( 
+    createEquipmentRoutine,
+    async (equipment) => {
+        const token = localStorage.getItem('token');
+        return await sessions.post(`/equipments/?access_token=${token}`, equipment);
+    }
+);

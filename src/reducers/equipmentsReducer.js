@@ -1,7 +1,7 @@
-import { getEquipmentsRoutine, editEquipmentsRoutine, deleteEquipmentsRoutine, addEquipmentsRoutine  } from '../actions';
+import { getEquipmentsRoutine, editEquipmentRoutine, deleteEquipmentRoutine, createEquipmentRoutine  } from '../actions';
 const INITIAL_STATE = {
-    equipmentsData: null,
-    paginationData: null
+    equipmentsData: { id: null, name: ''},
+    paginationData: { count: 0, limit: 25, offset: 0, total_count: 0 }
 }
 
 
@@ -12,13 +12,13 @@ export default (state = INITIAL_STATE, action) => {
             paginationData: action.payload.data.pagination
         });
     }
-    if(deleteEquipmentsRoutine.isSuccessAction(action)){
+    if(deleteEquipmentRoutine.isSuccessAction(action)){
         return {...state};
     }
-    if(editEquipmentsRoutine.isSuccessAction(action)){
+    if(editEquipmentRoutine.isSuccessAction(action)){
         return {...state};
     }
-    if(addEquipmentsRoutine.isSuccessAction(action)){
+    if(createEquipmentRoutine.isSuccessAction(action)){
         return {...state};
     }
     return state;

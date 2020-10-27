@@ -1,8 +1,8 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { getEquipments, deleteEquipments } from '../actions/equipments';
+import { getEquipments, deleteEquipment } from '../actions/equipments';
 import { logOut } from '../actions/auth';
-import { showError } from '../actions/showError';
+import { showError } from '../actions/error';
 import MaterialSnackbar from './MaterialSnackbar';
 import history from '../history';
 import EquipmentsList from './EquipmentsList';
@@ -18,31 +18,35 @@ class Manager extends React.Component {
     componentDidMount() {
         const token = localStorage.getItem('token');
         if (token) {
-            this.props.getEquipments(token);
+            this.props.getEquipments(token)
+                .then( () => history.push('/'))
+                .catch( (error) => this.props.showError(error) );
         } else {
             history.push('/signin');
         }
     }
 
     componentDidUpdate(prevProps) {
-        if(this.props.message !== prevProps.message) {
+        if(this.props.error.errorMessage !== prevProps.error.errorMessage) {
             this.setState({ buttonLogOut: false });
         }
     }
 
     signOutClick = () => {
         this.setState({ buttonLogOut: true });
-        const token = localStorage.getItem('token');
-        this.props.logOut(token).catch((error) => this.props.showError(error));
+        this.props.logOut()
+            .then( () => history.push('/signin'))
+            .catch((error) => this.props.showError(error));
     }
 
     checkEquipments(){
-        if(this.props.equipmentsData){
+        if(this.props.equipmentsData.id !== null ){
             return(
                 <EquipmentsList 
                     equipmentsData={this.props.equipmentsData}
                     paginationData={this.props.paginationData}
-                    deleteEquipments={this.props.deleteEquipments}                 
+                    deleteEquipment={this.props.deleteEquipment}
+                    error={this.props.showError}                 
                 />
             );
         }
@@ -64,7 +68,7 @@ class Manager extends React.Component {
                         Log Out
                     </Button>
                 </div>
-                <MaterialSnackbar message={this.props.message} />
+                <MaterialSnackbar/>
             </div>
         );
     }
@@ -74,9 +78,9 @@ const mapStateToProps = (state) => {
     return { 
         equipmentsData: state.equipments.equipmentsData,
         paginationData: state.equipments.paginationData,
-        message: state.error.errorMessage
+        error: state.error
     };
 }
 
 
-export default connect(mapStateToProps, { getEquipments, deleteEquipments, logOut, showError })(Manager);
+export default connect(mapStateToProps, { getEquipments, deleteEquipment, logOut, showError })(Manager);

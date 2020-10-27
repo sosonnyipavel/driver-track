@@ -1,11 +1,10 @@
 import { createThunkRoutine } from 'redux-thunk-routine';
 
 export const showErrorRoutine = createThunkRoutine('SHOW_ERROR');
-export const showModalRoutine = createThunkRoutine('SHOW_MODAL');
-export const hideModalRoutine = createThunkRoutine('HIDE_MODAL');
+export const hideErrorRoutine = createThunkRoutine('HIDE_ERROR');
 export const logInRoutine = createThunkRoutine('LOG_IN');
 export const logOutRoutine = createThunkRoutine('LOG_OUT');
 export const getEquipmentsRoutine = createThunkRoutine('GET_EQUIPMENTS');
-export const editEquipmentsRoutine = createThunkRoutine('EDIT_EQUIPMENTS');
-export const deleteEquipmentsRoutine = createThunkRoutine('DELETE_EQUIPMENTS');
-export const addEquipmentsRoutine = createThunkRoutine('ADD_EQUIPMENTS');
+export const editEquipmentRoutine = createThunkRoutine('EDIT_EQUIPMENT');
+export const deleteEquipmentRoutine = createThunkRoutine('DELETE_EQUIPMENT');
+export const createEquipmentRoutine = createThunkRoutine('CREATE_EQUIPMENT');

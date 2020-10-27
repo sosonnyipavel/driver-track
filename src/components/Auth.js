@@ -3,7 +3,7 @@ import Form from './Form';
 import MaterialSnackbar from './MaterialSnackbar';
 import {connect} from 'react-redux';
 import { logIn } from '../actions/auth';
-import { showError } from '../actions/showError';
+import { showError } from '../actions/error';
 import history from '../history';
 
 class Auth extends React.Component{
@@ -21,7 +21,7 @@ class Auth extends React.Component{
     }
 
     componentDidUpdate(prevProps) {
-        if(this.props.message !== prevProps.message) {
+        if(this.props.error.errorMessage !== prevProps.error.errorMessage) {
             this.setState({ buttonSubmit: false });
         }
     }
@@ -29,7 +29,9 @@ class Auth extends React.Component{
 
     onSubmit = (formValues) => {
         this.setState({ buttonSubmit: true });
-        this.props.logIn(formValues).catch((error) => this.props.showError(error));
+        this.props.logIn(formValues)
+            .then( () => history.push('/') )
+            .catch( (error) => {this.props.showError(error) });
     }
     
     render() {
@@ -37,7 +39,7 @@ class Auth extends React.Component{
 
             <div style={{ margin: 150}} >
                 <Form onSubmit={this.onSubmit} buttonSubmit={this.state.buttonSubmit} />
-                <MaterialSnackbar message={this.props.message} />
+                <MaterialSnackbar/>
             </div>
         );
     }
@@ -46,7 +48,7 @@ class Auth extends React.Component{
 
 const mapStateToProps = (state) => {
     return { 
-        message: state.error.errorMessage
+        error: state.error
     };
 }
 

@@ -7,13 +7,13 @@ export const logIn = getThunkActionCreator (
     logInRoutine, async (formValues) => {
     const response = await sessions.post('/sessions', { username: formValues.email, password: formValues.password, session: history.location });
     localStorage.setItem('token', response.data.session.access_token);
-    history.push('/');
     return response;
 });
 
 export const logOut = getThunkActionCreator ( 
-    logOutRoutine, async (token) => {
-    await sessions.delete(`/sessions?access_token=${token}`);
-    localStorage.removeItem('token');
-    history.push('/signin');
+    logOutRoutine, 
+    async () => {
+        const token = localStorage.getItem('token');
+        await sessions.delete(`/sessions?access_token=${token}`);
+        localStorage.removeItem('token');
 });
