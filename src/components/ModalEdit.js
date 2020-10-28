@@ -34,16 +34,15 @@ class ModalEdit extends React.Component {
       }
   }
     handleClose = () => {
-        this.setState({open: false });
+        this.setState({open: false, name: '' });
       };
 
     handleSubmitYes = () => {
         if(this.state.name !== this.props.selectedRow.name){
           this.props.editEquipment(this.state)
-            .then( this.setState({ name: '' }))
+            .then( () => this.handleClose() )
             .catch((error) => this.props.showError(error));
         }
-        this.handleClose();
     }
 
 

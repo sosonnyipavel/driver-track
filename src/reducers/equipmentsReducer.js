@@ -15,9 +15,9 @@ export default (state = INITIAL_STATE, action) => {
     if(deleteEquipmentRoutine.isSuccessAction(action)){
         return ({...state,
             equipmentsData: state.equipmentsData.map( 
-                (equipment,id) =>
+                (equipment,index) =>
                     equipment.id === action.payload ?
-                    delete state.equipmentsData[id] :
+                    delete state.equipmentsData[index] :
                     equipment
             ),
             paginationData: {

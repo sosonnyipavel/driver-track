@@ -27,7 +27,7 @@ class Manager extends React.Component {
     }
     componentDidUpdate(prevProps){
         if(this.props.error.errorMessage !== prevProps.error.errorMessage) {
-            history.push('/');
+            this.setState({ buttonLogOut: false });
         }
     }
 
