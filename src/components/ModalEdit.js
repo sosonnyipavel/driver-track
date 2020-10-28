@@ -6,7 +6,6 @@ import TextField from '@material-ui/core/TextField';
 import Modal from '@material-ui/core/Modal';
 import Button from '@material-ui/core/Button';
 import MaterialSnackbar from './MaterialSnackbar';
-import history from '../history';
 
 class ModalEdit extends React.Component {
     constructor(props) {
@@ -41,7 +40,7 @@ class ModalEdit extends React.Component {
     handleSubmitYes = () => {
         if(this.state.name !== this.props.selectedRow.name){
           this.props.editEquipment(this.state)
-            .then( () => history.push('/signin'))
+            .then( this.setState({ name: '' }))
             .catch((error) => this.props.showError(error));
         }
         this.handleClose();

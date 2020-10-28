@@ -12,7 +12,8 @@ export const deleteEquipment = getThunkActionCreator(
     deleteEquipmentRoutine,
     async (id) => {
         const token = localStorage.getItem('token');
-        return await sessions.delete(`/equipments/${id}?access_token=${token}`);
+        await sessions.delete(`/equipments/${id}?access_token=${token}`);
+        return id;
     }
 );
 
@@ -21,7 +22,8 @@ export const editEquipment = getThunkActionCreator(
     editEquipmentRoutine,
     async (equipment) => {
         const token = localStorage.getItem('token');
-        return await sessions.patch(`/equipments/${equipment.id}?access_token=${token}`, equipment.name)
+        await sessions.patch(`/equipments/${equipment.id}`, { access_token: token, equipment });
+        return equipment;
     }
 );
 

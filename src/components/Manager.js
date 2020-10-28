@@ -25,10 +25,9 @@ class Manager extends React.Component {
             history.push('/signin');
         }
     }
-
-    componentDidUpdate(prevProps) {
+    componentDidUpdate(prevProps){
         if(this.props.error.errorMessage !== prevProps.error.errorMessage) {
-            this.setState({ buttonLogOut: false });
+            history.push('/');
         }
     }
 
@@ -40,7 +39,7 @@ class Manager extends React.Component {
     }
 
     checkEquipments(){
-        if(this.props.equipmentsData.id !== null ){
+        if(this.props.paginationData.count !== 0){
             return(
                 <EquipmentsList 
                     equipmentsData={this.props.equipmentsData}

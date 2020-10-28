@@ -6,7 +6,6 @@ import TextField from '@material-ui/core/TextField';
 import Modal from '@material-ui/core/Modal';
 import Button from '@material-ui/core/Button';
 import MaterialSnackbar from './MaterialSnackbar';
-import history from '../history';
 
 class ModalCreate extends React.Component {
     constructor(props) {
@@ -34,8 +33,8 @@ class ModalCreate extends React.Component {
       };
 
     handleSubmitYes = () => {
-      this.props.createEquipment(this.state.name)
-        .then( () =>  history.push('/signin'))
+      this.props.createEquipment(this.state)
+        .then( this.setState({ name: '' }))
         .catch((error) => this.props.showError(error));
       this.handleClose();
     }

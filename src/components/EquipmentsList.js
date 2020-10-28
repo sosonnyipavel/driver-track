@@ -21,7 +21,6 @@ import EditIcon from '@material-ui/icons/Edit';
 import AddCircleIcon from '@material-ui/icons/AddCircle';
 import ModalEdit from '../components/ModalEdit';
 import ModalCreate from '../components/ModalCreate';
-import history from '../history';
 
 
 function descendingComparator(a, b, orderBy) {
@@ -135,13 +134,13 @@ const EnhancedTableToolbar = (props) => {
   const [modalEdit, setModalEdit] = React.useState(false);
   const [modalCreate, setModalCreate] = React.useState(false);
   const [row, setRow] = React.useState({});
-  const { numSelected, selected, deleteEquipment, rows, error } = props;
+  const { numSelected, selected, deleteEquipment, rows, error, handleClick } = props;
 
   
   const handleClickRow = (event) => {
     if(event){
         deleteEquipment(selected[0])
-        .then( () => history.push('/signin'))
+        .then( (event) => handleClick(event, selected[0]) )
         .catch( (e) => error(e) );
     }
     event.preventDefault();
@@ -255,6 +254,7 @@ export default function EnhancedTable(props) {
   };
 
   const handleClick = (event, id) => {
+
     const selectedIndex = selected.indexOf(id);
     let newSelected = [];
 
@@ -297,6 +297,7 @@ export default function EnhancedTable(props) {
           rows={rows} 
           deleteEquipment={props.deleteEquipment}
           error={props.error}
+          handleClick={handleClick}
         />
         <TableContainer>
           <Table
