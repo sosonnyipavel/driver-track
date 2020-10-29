@@ -36,7 +36,6 @@ class Auth extends React.Component{
     
     render() {
         return (
-
             <div style={{ margin: 150}} >
                 <Form onSubmit={this.onSubmit} buttonSubmit={this.state.buttonSubmit} />
                 <MaterialSnackbar/>

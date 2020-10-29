@@ -21,8 +21,8 @@ export default (state = INITIAL_STATE, action) => {
                     equipment
             ),
             paginationData: {
-                count: state.paginationData.count - 1,
-                total_count: state.paginationData.total_count - 1
+                count: state.paginationData.count--,
+                total_count: state.paginationData.total_count--
             }
         });
     }
@@ -40,8 +40,8 @@ export default (state = INITIAL_STATE, action) => {
         state.equipmentsData.push(action.payload.data.equipment);
         return ({...state, 
             paginationData: {
-                count: state.paginationData.count + 1,
-                total_count: state.paginationData.total_count + 1
+                count: state.paginationData.count++,
+                total_count: state.paginationData.total_count++
             }
         });
     }

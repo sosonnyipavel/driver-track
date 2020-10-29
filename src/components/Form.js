@@ -13,10 +13,15 @@ class Form extends React.Component{
         super(props);
         this.state = { showPassword: false};
     }
-    handleClickShowPassword = (event) => {
+
+    handleClickClear = (event) => {
         event.preventDefault();
+    };
+
+    handleMouseDownPassword = () => {
         this.setState({ showPassword: !this.state.showPassword });
-      };
+    };
+
     renderError({ touched, error  }) {
         if (touched && error) {
             return (
@@ -33,11 +38,13 @@ class Form extends React.Component{
           {...input}
             type={type === 'email' ? 'email' : this.state.showPassword ? 'text' : 'password' }
             error={meta.error && meta.touched ? true: false}
+            autoFocus
             endAdornment={ type === 'email' ? null :
               <InputAdornment position="end">
                 <IconButton
                   aria-label="toggle password visibility"
-                  onClick={this.handleClickShowPassword}
+                  onClick={this.handleClickClear}
+                  onMouseDown={this.handleMouseDownPassword}
                 >
                   {this.state.showPassword ? <Visibility /> : <VisibilityOff />}
                 </IconButton>

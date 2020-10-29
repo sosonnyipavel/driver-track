@@ -34,7 +34,7 @@ class ModalCreate extends React.Component {
 
     handleSubmitYes = () => {
       this.props.createEquipment(this.state)
-        .then( () => this.handleClose() )
+        .then( this.handleClose )
         .catch((error) => this.props.showError(error));
     }
 
