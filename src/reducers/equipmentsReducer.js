@@ -1,4 +1,4 @@
-import { getEquipmentsRoutine, editEquipmentRoutine, deleteEquipmentRoutine, createEquipmentRoutine  } from '../actions';
+import { getEquipmentsRoutine, updateEquipmentRoutine, deleteEquipmentRoutine, createEquipmentRoutine  } from '../actions';
 const INITIAL_STATE = {
     equipmentsData: [],
     paginationData: { count: 0, limit: 25, offset: 0, total_count: 0 }
@@ -14,24 +14,23 @@ export default (state = INITIAL_STATE, action) => {
     }
     if(deleteEquipmentRoutine.isSuccessAction(action)){
         return ({...state,
-            equipmentsData: state.equipmentsData.map( 
-                (equipment,index) =>
-                    equipment.id === action.payload ?
-                    delete state.equipmentsData[index] :
-                    equipment
+            equipmentsData: state.equipmentsData.filter( 
+                equipment => {
+                    return equipment.id !== action.payload.id
+                }
             ),
             paginationData: {
-                count: state.paginationData.count--,
-                total_count: state.paginationData.total_count--
+                count: state.paginationData.count - 1,
+                total_count: state.paginationData.total_count - 1
             }
         });
     }
-    if(editEquipmentRoutine.isSuccessAction(action)){
+    if(updateEquipmentRoutine.isSuccessAction(action)){
         return ({...state, 
             equipmentsData: state.equipmentsData.map( 
                 equipment => 
-                    equipment.id === action.payload.id ? 
-                    {...equipment, name: action.payload.name} : 
+                    equipment.id === action.payload.equipment.id ? 
+                    {...equipment, name: action.payload.equipment.name} : 
                     equipment 
             ) 
         });
@@ -40,8 +39,8 @@ export default (state = INITIAL_STATE, action) => {
         state.equipmentsData.push(action.payload.data.equipment);
         return ({...state, 
             paginationData: {
-                count: state.paginationData.count++,
-                total_count: state.paginationData.total_count++
+                count: state.paginationData.count + 1,
+                total_count: state.paginationData.total_count + 1
             }
         });
     }

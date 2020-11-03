@@ -14,6 +14,7 @@ export const logOut = getThunkActionCreator (
     logOutRoutine, 
     async () => {
         const token = localStorage.getItem('token');
-        await sessions.delete(`/sessions?access_token=${token}`);
+        const response = await sessions.delete(`/sessions?access_token=${token}`);
         localStorage.removeItem('token');
+        return response;
 });

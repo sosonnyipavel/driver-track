@@ -1,8 +1,9 @@
-import { showErrorRoutine, hideErrorRoutine } from '../actions';
+import { showErrorRoutine, hideSnackbarRoutine, showSuccessRoutine } from '../actions';
 
 const INITIAL_STATE = {
-    errorMessage: null,
-    setError: false
+    errorMessage: '',
+    setError: false,
+    setSuccess: false
 };
 
 export default (state = INITIAL_STATE, action) => {
@@ -26,7 +27,10 @@ export default (state = INITIAL_STATE, action) => {
             };
         }
     }
-    if(hideErrorRoutine.isSuccessAction(action)){
+    if(showSuccessRoutine.isSuccessAction(action)){
+        return {...state, setSuccess: true };
+    } 
+    if(hideSnackbarRoutine.isSuccessAction(action)){
         return INITIAL_STATE;
     } 
     return state;

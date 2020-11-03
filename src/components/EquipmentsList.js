@@ -19,7 +19,7 @@ import Tooltip from '@material-ui/core/Tooltip';
 import DeleteIcon from '@material-ui/icons/Delete';
 import EditIcon from '@material-ui/icons/Edit';
 import AddCircleIcon from '@material-ui/icons/AddCircle';
-import ModalEdit from '../components/ModalEdit';
+import ModalUpdate from '../components/ModalUpdate';
 import ModalCreate from '../components/ModalCreate';
 
 
@@ -131,24 +131,26 @@ const useToolbarStyles = makeStyles((theme) => ({
 
 const EnhancedTableToolbar = (props) => {
   const classes = useToolbarStyles();
-  const [modalEdit, setModalEdit] = React.useState(false);
+  const [modalUpdate, setModalUpdate] = React.useState(false);
   const [modalCreate, setModalCreate] = React.useState(false);
   const [row, setRow] = React.useState({});
-  const { numSelected, selected, deleteEquipment, rows, error, handleClick } = props;
+  const { numSelected, selected, deleteEquipment, rows, error, success, handleClick } = props;
 
   
   const handleClickRow = (event) => {
     if(event){
         deleteEquipment(selected[0])
-        .then( (event) => handleClick(event, selected[0]) )
+        .then( (event) => {
+          handleClick(event, selected[0]);
+          success();
+        })
         .catch( (e) => error(e) );
     }
-    event.preventDefault();
   }
 
-  const editClick = (event) => {
+  const updateClick = (event) => {
     if(event){
-      setModalEdit(!modalEdit);
+      setModalUpdate(!modalUpdate);
       rows.forEach(row => {
         if (row.id === selected[0]){ 
           setRow(row);
@@ -176,7 +178,7 @@ const EnhancedTableToolbar = (props) => {
       {numSelected > 0 && numSelected < 2 ? (    
         <div style={{whiteSpace: 'nowrap'}}> 
           <Tooltip title="Edit">
-          <IconButton onClick={editClick} aria-label="edit">
+          <IconButton onClick={updateClick} aria-label="edit">
             <EditIcon/>
           </IconButton>
           </Tooltip>
@@ -193,7 +195,7 @@ const EnhancedTableToolbar = (props) => {
         </IconButton>
         </Tooltip>
       }
-      <ModalEdit modalEdit={modalEdit} selectedRow={row}/>
+      <ModalUpdate modalUpdate={modalUpdate} selectedRow={row}/>
       <ModalCreate modalCreate={modalCreate}/>
     </Toolbar>
     
@@ -236,7 +238,7 @@ export default function EnhancedTable(props) {
   const [orderBy, setOrderBy] = React.useState('name');
   const [selected, setSelected] = React.useState([]);
   const [page, setPage] = React.useState(0);
-  const [rowsPerPage, setRowsPerPage] = React.useState(5);
+  const [rowsPerPage, setRowsPerPage] = React.useState(10);
 
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === 'asc';
@@ -297,6 +299,7 @@ export default function EnhancedTable(props) {
           rows={rows} 
           deleteEquipment={props.deleteEquipment}
           error={props.error}
+          success={props.success}
           handleClick={handleClick}
         />
         <TableContainer>

@@ -3,7 +3,7 @@ import Form from './Form';
 import MaterialSnackbar from './MaterialSnackbar';
 import {connect} from 'react-redux';
 import { logIn } from '../actions/auth';
-import { showError } from '../actions/error';
+import { showError } from '../actions/snackbar';
 import history from '../history';
 
 class Auth extends React.Component{
@@ -21,7 +21,7 @@ class Auth extends React.Component{
     }
 
     componentDidUpdate(prevProps) {
-        if(this.props.error.errorMessage !== prevProps.error.errorMessage) {
+        if(this.props.snackbar.errorMessage !== prevProps.snackbar.errorMessage) {
             this.setState({ buttonSubmit: false });
         }
     }
@@ -31,7 +31,7 @@ class Auth extends React.Component{
         this.setState({ buttonSubmit: true });
         this.props.logIn(formValues)
             .then( () => history.push('/') )
-            .catch( (error) => {this.props.showError(error) });
+            .catch( (error) => this.props.showError(error) );
     }
     
     render() {
@@ -47,7 +47,7 @@ class Auth extends React.Component{
 
 const mapStateToProps = (state) => {
     return { 
-        error: state.error
+        snackbar: state.snackbar
     };
 }
 

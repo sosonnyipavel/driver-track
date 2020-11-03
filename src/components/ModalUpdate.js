@@ -1,13 +1,13 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { showError } from '../actions/error';
-import { editEquipment } from '../actions/equipments';
+import { showError, showSuccess } from '../actions/snackbar';
+import { updateEquipment } from '../actions/equipments';
 import TextField from '@material-ui/core/TextField';
 import Modal from '@material-ui/core/Modal';
 import Button from '@material-ui/core/Button';
 import MaterialSnackbar from './MaterialSnackbar';
 
-class ModalEdit extends React.Component {
+class ModalUpdate extends React.Component {
     constructor(props) {
         super(props)
         this.state = { 
@@ -18,7 +18,7 @@ class ModalEdit extends React.Component {
     }
 
     componentDidUpdate(prevProps){
-      if(this.props.modalEdit !== prevProps.modalEdit){
+      if(this.props.modalUpdate !== prevProps.modalUpdate){
         this.setState({
           open: true, 
           name: this.props.selectedRow.name,
@@ -39,8 +39,11 @@ class ModalEdit extends React.Component {
 
     handleSubmitYes = () => {
         if(this.state.name !== this.props.selectedRow.name){
-          this.props.editEquipment(this.state)
-            .then( this.handleClose )
+          this.props.updateEquipment(this.state)
+          .then( () => { 
+            this.handleClose();
+            this.props.showSuccess(); 
+          })
             .catch((error) => this.props.showError(error));
         }
     }
@@ -81,4 +84,4 @@ class ModalEdit extends React.Component {
 }
 
 
-export default connect(null, {  showError, editEquipment })(ModalEdit);
+export default connect(null, {  showError, showSuccess, updateEquipment })(ModalUpdate);

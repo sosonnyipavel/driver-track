@@ -1,6 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { showError } from '../actions/error';
+import { showError, showSuccess } from '../actions/snackbar';
 import { createEquipment } from '../actions/equipments';
 import TextField from '@material-ui/core/TextField';
 import Modal from '@material-ui/core/Modal';
@@ -34,7 +34,10 @@ class ModalCreate extends React.Component {
 
     handleSubmitYes = () => {
       this.props.createEquipment(this.state)
-        .then( this.handleClose )
+        .then( () => { 
+          this.handleClose();
+          this.props.showSuccess(); 
+        })
         .catch((error) => this.props.showError(error));
     }
 
@@ -74,4 +77,4 @@ class ModalCreate extends React.Component {
 }
 
 
-export default connect(null, {  showError, createEquipment })(ModalCreate);
+export default connect(null, {  showError, showSuccess, createEquipment })(ModalCreate);

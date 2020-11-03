@@ -2,7 +2,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { getEquipments, deleteEquipment } from '../actions/equipments';
 import { logOut } from '../actions/auth';
-import { showError } from '../actions/error';
+import { showError, showSuccess } from '../actions/snackbar';
 import MaterialSnackbar from './MaterialSnackbar';
 import history from '../history';
 import EquipmentsList from './EquipmentsList';
@@ -18,8 +18,8 @@ class Manager extends React.Component {
     componentDidMount() {
         const token = localStorage.getItem('token');
         if (token) {
-            this.props.getEquipments(token)
-                .then( () => history.push('/'))
+            this.props.getEquipments()
+                .then( () => this.props.showSuccess() )
                 .catch( (error) => this.props.showError(error) );
         } else {
             history.push('/signin');
@@ -27,7 +27,7 @@ class Manager extends React.Component {
     }
     
     componentDidUpdate(prevProps){
-        if(this.props.error.errorMessage !== prevProps.error.errorMessage) {
+        if(this.props.snackbar.errorMessage !== prevProps.snackbar.errorMessage) {
             this.setState({ buttonLogOut: false });
         }
     }
@@ -35,7 +35,10 @@ class Manager extends React.Component {
     signOutClick = () => {
         this.setState({ buttonLogOut: true });
         this.props.logOut()
-            .then( () => history.push('/signin'))
+            .then( () => {
+                this.props.showSuccess();
+                history.push('/signin')
+            })
             .catch((error) => this.props.showError(error));
     }
 
@@ -46,7 +49,8 @@ class Manager extends React.Component {
                     equipmentsData={this.props.equipmentsData}
                     paginationData={this.props.paginationData}
                     deleteEquipment={this.props.deleteEquipment}
-                    error={this.props.showError}                 
+                    error={this.props.showError}
+                    success={this.props.showSuccess}                 
                 />
             );
         }
@@ -78,9 +82,9 @@ const mapStateToProps = (state) => {
     return { 
         equipmentsData: state.equipments.equipmentsData,
         paginationData: state.equipments.paginationData,
-        error: state.error
+        snackbar: state.snackbar
     };
 }
 
 
-export default connect(mapStateToProps, { getEquipments, deleteEquipment, logOut, showError })(Manager);
+export default connect(mapStateToProps, { getEquipments, deleteEquipment, logOut, showError, showSuccess })(Manager);
