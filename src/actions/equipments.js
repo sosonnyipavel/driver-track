@@ -4,7 +4,7 @@ import sessions from '../api/sessions';
 
 
 export const getEquipments = getThunkActionCreator (
-    getEquipmentsRoutine, async ({ limit = 10, offset = 0, orders = { name: 'asc' }  }) => {
+    getEquipmentsRoutine, async ({ limit = 10, offset = 0, orders = { 'name': 'asc' }  }) => {
         const token = localStorage.getItem('token');
         return await sessions.get(`/equipments`,
             {
@@ -12,7 +12,7 @@ export const getEquipments = getThunkActionCreator (
                     access_token: token,
                     limit,
                     offset,
-                    //orders
+                    orders
                 }
             }
         );

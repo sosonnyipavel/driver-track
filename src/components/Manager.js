@@ -42,20 +42,19 @@ class Manager extends React.Component {
             .catch((error) => this.props.showError(error));
     }
 
-    updateEquipmentsData = ({limit, offset}) => {
-        this.props.getEquipments({limit, offset})
+    getEquipmentsData = ({limit, offset, orders}) => {
+        this.props.getEquipments({limit, offset, orders})
         .then(this.props.showSuccess())
         .catch( (error) => this.props.showError(error) );
     }
+    
     checkEquipments(){
         return(
             <EquipmentsList 
                 equipmentsData={this.props.equipmentsData}
                 paginationData={this.props.paginationData}
                 deleteEquipment={this.props.deleteEquipment}
-                error={this.props.showError}
-                success={this.props.showSuccess}
-                updateEquipmentsData={this.updateEquipmentsData}                 
+                getEquipmentsData={this.getEquipmentsData}                 
             />
         );
     }

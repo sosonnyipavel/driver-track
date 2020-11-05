@@ -1,7 +1,7 @@
 import { getEquipmentsRoutine, updateEquipmentRoutine, deleteEquipmentRoutine, createEquipmentRoutine  } from '../actions';
 const INITIAL_STATE = {
     equipmentsData: [],
-    paginationData: { count: 0, limit: 10, offset: 0, total_count: 0, orders: [] }
+    paginationData: { count: 0, limit: 10, offset: 0, total_count: 0 }
 }
 
 
@@ -20,7 +20,9 @@ export default (state = INITIAL_STATE, action) => {
                 }
             ),
             paginationData: {
-                count: state.paginationData.count - 1,
+                count: state.paginationData.count, 
+                limit: state.paginationData.limit, 
+                offset: state.paginationData.offset,
                 total_count: state.paginationData.total_count - 1
             }
         });
@@ -36,10 +38,26 @@ export default (state = INITIAL_STATE, action) => {
         });
     }
     if(createEquipmentRoutine.isSuccessAction(action)){
-        state.equipmentsData.push(action.payload.data.equipment);
-        return ({...state, 
+        //Вот здесь меня смущает немного. Правильно ли я делаю? Я же получается сначала меняю текущий стейт. А потом его сортирую.
+        state.equipmentsData.splice(state.equipmentsData.length - 1, 1, action.payload.data.equipment);
+        return ({...state,
+            equipmentsData: state.equipmentsData.sort( (a, b) => 
+                {
+                    let nameA = a.name.toUpperCase();
+                    let nameB = b.name.toUpperCase();
+                    if (nameA < nameB) {
+                      return -1;
+                    }
+                    if (nameA > nameB) {
+                      return 1;
+                    }
+                    return 0;
+                }
+            ),
             paginationData: {
-                count: state.paginationData.count + 1,
+                count: state.paginationData.count, 
+                limit: state.paginationData.limit, 
+                offset: state.paginationData.offset,
                 total_count: state.paginationData.total_count + 1
             }
         });

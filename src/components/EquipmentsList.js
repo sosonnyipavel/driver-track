@@ -108,17 +108,25 @@ const EnhancedTableToolbar = (props) => {
   const [modalUpdate, setModalUpdate] = React.useState(false);
   const [modalCreate, setModalCreate] = React.useState(false);
   const [row, setRow] = React.useState({});
-  const { numSelected, selected, deleteEquipment, rows, error, success, handleClick } = props;
+  const { numSelected, selected, deleteEquipment, rows, handleClick, getEquipmentsData, paginationData, rowsPerPage, order, orderBy } = props;
 
   
-  const handleClickRow = (event) => {
+  const handleClickDelete = (event) => {
     if(event){
-        deleteEquipment(selected[0])
-        .then( (event) => {
-          handleClick(event, selected[0]);
-          success();
-        })
-        .catch( (e) => error(e) );
+      deleteEquipment(selected[0]);
+      //Ну и вот тут немного не уверен. Я получаю все записи плюс следующую. Но как именно получить просто следующую пока не понимаю
+      // Отдельно по айди могу получить запись, но как понять какой айди у записы на следующей странице не переходя на неё
+      if(paginationData.total_count >= rowsPerPage){
+        getEquipmentsData(
+          {
+            limit: paginationData.limit + 1, 
+            offset: paginationData.offset, 
+            orders: orderBy === 'name'? { name: order } : { id: order } 
+          }
+        );
+      }
+      console.log(paginationData)
+      handleClick(event, selected[0]);
     }
   }
 
@@ -157,7 +165,7 @@ const EnhancedTableToolbar = (props) => {
           </IconButton>
           </Tooltip>
           <Tooltip title="Delete">
-          <IconButton onClick={handleClickRow} aria-label="delete">
+          <IconButton onClick={handleClickDelete} aria-label="delete">
             <DeleteIcon />
           </IconButton>
           </Tooltip>
@@ -219,6 +227,13 @@ export default function EnhancedTable(props) {
     const isAsc = orderBy === property && order === 'asc';
     setOrder(isAsc ? 'desc' : 'asc');
     setOrderBy(property);
+    props.getEquipmentsData(
+        {
+          limit: props.paginationData.limit, 
+          offset: props.paginationData.offset, 
+          orders: orderBy === 'name'? { name: order } : { id: order }
+        }
+      )
   };
 
   const handleSelectAllClick = (event) => {
@@ -252,12 +267,13 @@ export default function EnhancedTable(props) {
   };
 
   const handleChangePage = (event, newPage) => {
-    props.updateEquipmentsData(
+    props.getEquipmentsData(
       {
         limit: props.paginationData.limit, 
         offset: props.paginationData.count >= props.paginationData.limit && newPage > prevPage ?
          props.paginationData.offset + props.paginationData.limit : 
-         props.paginationData.offset - props.paginationData.limit
+         props.paginationData.offset - props.paginationData.limit,
+        orders: orderBy === 'name'? { name: order } : { id: order }
       }
     )
     prevPage = newPage;
@@ -265,7 +281,13 @@ export default function EnhancedTable(props) {
   };
 
   const handleChangeRowsPerPage = (event) => {
-    props.updateEquipmentsData({limit: event.target.value, offset: props.paginationData.offset})
+    props.getEquipmentsData(
+      {
+        limit: event.target.value, 
+        offset: props.paginationData.offset, 
+        orders: orderBy === 'name'? { name: order } : { id: order }
+      }
+    );
       setRowsPerPage(parseInt(event.target.value, 10));
       setPage(0);
   };
@@ -283,9 +305,12 @@ export default function EnhancedTable(props) {
           selected={selected} 
           rows={rows} 
           deleteEquipment={props.deleteEquipment}
-          error={props.error}
-          success={props.success}
+          getEquipmentsData={props.getEquipmentsData}
           handleClick={handleClick}
+          paginationData={props.paginationData}
+          rowsPerPage={rowsPerPage}
+          order={order}
+          orderBy={orderBy}
         />
         <TableContainer>
           <Table
