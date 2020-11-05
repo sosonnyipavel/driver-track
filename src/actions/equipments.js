@@ -4,10 +4,18 @@ import sessions from '../api/sessions';
 
 
 export const getEquipments = getThunkActionCreator (
-    getEquipmentsRoutine, async () => {
+    getEquipmentsRoutine, async ({ limit = 10, offset = 0, orders = { name: 'asc' }  }) => {
         const token = localStorage.getItem('token');
-        const response = await sessions.get(`/equipments?access_token=${token}`);
-        return response;
+        return await sessions.get(`/equipments`,
+            {
+                params: {
+                    access_token: token,
+                    limit,
+                    offset,
+                    //orders
+                }
+            }
+        );
 });
 
 export const deleteEquipment = getThunkActionCreator(
@@ -32,7 +40,6 @@ export const createEquipment = getThunkActionCreator(
     createEquipmentRoutine,
     async (equipment) => {
         const token = localStorage.getItem('token');
-        const response = await sessions.post(`/equipments/?access_token=${token}`, equipment);
-        return response;
+        return await sessions.post(`/equipments/?access_token=${token}`, equipment);
     }
 );

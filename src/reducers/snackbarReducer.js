@@ -16,7 +16,7 @@ export default (state = INITIAL_STATE, action) => {
             };
         } else if (action.payload.response.status === 400){
             return {...state, 
-                errorMessage: 'Wrong login or password',
+                errorMessage: action.payload.response.data.error.message,
                 setError: true
             };
         }

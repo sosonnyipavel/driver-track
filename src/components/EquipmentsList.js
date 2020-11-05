@@ -23,32 +23,6 @@ import ModalUpdate from '../components/ModalUpdate';
 import ModalCreate from '../components/ModalCreate';
 
 
-function descendingComparator(a, b, orderBy) {
-  if (b[orderBy] < a[orderBy]) {
-    return -1;
-  }
-  if (b[orderBy] > a[orderBy]) {
-    return 1;
-  }
-  return 0;
-}
-
-function getComparator(order, orderBy) {
-  return order === 'desc'
-    ? (a, b) => descendingComparator(a, b, orderBy)
-    : (a, b) => -descendingComparator(a, b, orderBy);
-}
-
-function stableSort(array, comparator) {
-  const stabilizedThis = array.map((el, index) => [el, index]);
-  stabilizedThis.sort((a, b) => {
-    const order = comparator(a[0], b[0]);
-    if (order !== 0) return order;
-    return a[1] - b[1];
-  });
-  return stabilizedThis.map((el) => el[0]);
-}
-
 const headCells = [
   { id: 'name', numeric: false, disablePadding: true, label: 'Name' },
   { id: 'id', numeric: true, disablePadding: false, label: 'ID' },
@@ -233,12 +207,13 @@ const useStyles = makeStyles((theme) => ({
 
 export default function EnhancedTable(props) {
   const rows = props.equipmentsData;
+  let prevPage = 0;
   const classes = useStyles();
   const [order, setOrder] = React.useState('asc');
   const [orderBy, setOrderBy] = React.useState('name');
   const [selected, setSelected] = React.useState([]);
   const [page, setPage] = React.useState(0);
-  const [rowsPerPage, setRowsPerPage] = React.useState(10);
+  const [rowsPerPage, setRowsPerPage] = React.useState(props.paginationData.limit);
 
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === 'asc';
@@ -277,12 +252,22 @@ export default function EnhancedTable(props) {
   };
 
   const handleChangePage = (event, newPage) => {
+    props.updateEquipmentsData(
+      {
+        limit: props.paginationData.limit, 
+        offset: props.paginationData.count >= props.paginationData.limit && newPage > prevPage ?
+         props.paginationData.offset + props.paginationData.limit : 
+         props.paginationData.offset - props.paginationData.limit
+      }
+    )
+    prevPage = newPage;
     setPage(newPage);
   };
 
   const handleChangeRowsPerPage = (event) => {
-    setRowsPerPage(parseInt(event.target.value, 10));
-    setPage(0);
+    props.updateEquipmentsData({limit: event.target.value, offset: props.paginationData.offset})
+      setRowsPerPage(parseInt(event.target.value, 10));
+      setPage(0);
   };
 
 
@@ -319,9 +304,7 @@ export default function EnhancedTable(props) {
               rowCount={props.paginationData.total_count}
             />
             <TableBody>
-              {stableSort(rows, getComparator(order, orderBy))
-                .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                .map((row, index) => {
+               { rows.map((row, index) => {
                   const isItemSelected = isSelected(row.id);
                   const labelId = `enhanced-table-checkbox-${index}`;
                   return (
@@ -330,8 +313,8 @@ export default function EnhancedTable(props) {
                       onClick={(event) => handleClick(event, row.id)}
                       role="checkbox"
                       aria-checked={isItemSelected}
-                      tabIndex={-1}
                       key={row.id}
+                      tabIndex={-1}
                       selected={isItemSelected}
                     >
                       <TableCell padding="checkbox">

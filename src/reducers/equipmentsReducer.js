@@ -1,7 +1,7 @@
 import { getEquipmentsRoutine, updateEquipmentRoutine, deleteEquipmentRoutine, createEquipmentRoutine  } from '../actions';
 const INITIAL_STATE = {
     equipmentsData: [],
-    paginationData: { count: 0, limit: 25, offset: 0, total_count: 0 }
+    paginationData: { count: 0, limit: 10, offset: 0, total_count: 0, orders: [] }
 }
 
 

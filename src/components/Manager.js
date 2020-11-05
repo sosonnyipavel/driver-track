@@ -18,7 +18,7 @@ class Manager extends React.Component {
     componentDidMount() {
         const token = localStorage.getItem('token');
         if (token) {
-            this.props.getEquipments()
+            this.props.getEquipments({})
                 .then( () => this.props.showSuccess() )
                 .catch( (error) => this.props.showError(error) );
         } else {
@@ -42,18 +42,22 @@ class Manager extends React.Component {
             .catch((error) => this.props.showError(error));
     }
 
+    updateEquipmentsData = ({limit, offset}) => {
+        this.props.getEquipments({limit, offset})
+        .then(this.props.showSuccess())
+        .catch( (error) => this.props.showError(error) );
+    }
     checkEquipments(){
-        if(this.props.paginationData.count !== 0){
-            return(
-                <EquipmentsList 
-                    equipmentsData={this.props.equipmentsData}
-                    paginationData={this.props.paginationData}
-                    deleteEquipment={this.props.deleteEquipment}
-                    error={this.props.showError}
-                    success={this.props.showSuccess}                 
-                />
-            );
-        }
+        return(
+            <EquipmentsList 
+                equipmentsData={this.props.equipmentsData}
+                paginationData={this.props.paginationData}
+                deleteEquipment={this.props.deleteEquipment}
+                error={this.props.showError}
+                success={this.props.showSuccess}
+                updateEquipmentsData={this.updateEquipmentsData}                 
+            />
+        );
     }
     
     render() {
