@@ -4,6 +4,17 @@ const INITIAL_STATE = {
     paginationData: { count: 0, limit: 10, offset: 0, total_count: 0 }
 }
 
+const sortAB = (a, b) => {
+    let nameA = a.name.toUpperCase();
+    let nameB = b.name.toUpperCase();
+    if (nameA < nameB) {
+      return -1;
+    }
+    if (nameA > nameB) {
+      return 1;
+    }
+    return 0;
+}
 
 export default (state = INITIAL_STATE, action) => {
     if(getEquipmentsRoutine.isSuccessAction(action)){
@@ -29,31 +40,21 @@ export default (state = INITIAL_STATE, action) => {
     }
     if(updateEquipmentRoutine.isSuccessAction(action)){
         return ({...state, 
-            equipmentsData: state.equipmentsData.map( 
+            equipmentsData: state.equipmentsData
+            .map( 
                 equipment => 
                     equipment.id === action.payload.equipment.id ? 
                     {...equipment, name: action.payload.equipment.name} : 
                     equipment 
-            ) 
+            )
+            .sort( (a, b) => sortAB(a, b) ) 
         });
     }
     if(createEquipmentRoutine.isSuccessAction(action)){
         //Вот здесь меня смущает немного. Правильно ли я делаю? Я же получается сначала меняю текущий стейт. А потом его сортирую.
         state.equipmentsData.splice(state.equipmentsData.length - 1, 1, action.payload.data.equipment);
         return ({...state,
-            equipmentsData: state.equipmentsData.sort( (a, b) => 
-                {
-                    let nameA = a.name.toUpperCase();
-                    let nameB = b.name.toUpperCase();
-                    if (nameA < nameB) {
-                      return -1;
-                    }
-                    if (nameA > nameB) {
-                      return 1;
-                    }
-                    return 0;
-                }
-            ),
+            equipmentsData: state.equipmentsData.sort( (a, b) => sortAB(a, b) ),
             paginationData: {
                 count: state.paginationData.count, 
                 limit: state.paginationData.limit, 
