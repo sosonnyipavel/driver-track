@@ -51,10 +51,11 @@ export default (state = INITIAL_STATE, action) => {
         });
     }
     if(createEquipmentRoutine.isSuccessAction(action)){
-        //Вот здесь меня смущает немного. Правильно ли я делаю? Я же получается сначала меняю текущий стейт. А потом его сортирую.
-        state.equipmentsData.splice(state.equipmentsData.length - 1, 1, action.payload.data.equipment);
         return ({...state,
-            equipmentsData: state.equipmentsData.sort( (a, b) => sortAB(a, b) ),
+            equipmentsData: state.equipmentsData
+                .slice(0, state.equipmentsData.length - 1)
+                .concat(action.payload.data.equipment)
+                .sort( (a, b) => sortAB(a, b) ),
             paginationData: {
                 count: state.paginationData.count, 
                 limit: state.paginationData.limit, 

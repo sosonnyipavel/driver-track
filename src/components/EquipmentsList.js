@@ -125,7 +125,6 @@ const EnhancedTableToolbar = (props) => {
           }
         );
       }
-      console.log(paginationData)
       handleClick(event, selected[0]);
     }
   }
