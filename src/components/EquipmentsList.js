@@ -31,7 +31,7 @@ const headCells = [
 ];
 
 function EnhancedTableHead(props) {
-  const { classes, onSelectAllClick, order, orderBy, numSelected, rowCount, onRequestSort } = props;
+  const { onSelectAllClick, order, orderBy, numSelected, rowCount, onRequestSort } = props;
   const createSortHandler = (property) => (event) => {
     onRequestSort(event, property);
   };
@@ -60,11 +60,6 @@ function EnhancedTableHead(props) {
               onClick={createSortHandler(headCell.id)}
             >
               {headCell.label}
-              {orderBy === headCell.id ? (
-                <span className={classes.visuallyHidden}>
-                  {order === 'desc' ? 'sorted descending' : 'sorted ascending'}
-                </span>
-              ) : null}
             </TableSortLabel>
           </TableCell>
         ))}
@@ -108,20 +103,17 @@ const EnhancedTableToolbar = (props) => {
   const [modalUpdate, setModalUpdate] = React.useState(false);
   const [modalCreate, setModalCreate] = React.useState(false);
   const [row, setRow] = React.useState({});
-  const { numSelected, selected, deleteEquipment, rows, handleClick, getEquipmentsData, paginationData, rowsPerPage, order, orderBy } = props;
+  const { numSelected, selected, deleteEquipment, rows, handleClick, getEquipmentsData, paginationData, rowsPerPage } = props;
 
   
   const handleClickDelete = (event) => {
     if(event){
       deleteEquipment(selected[0]);
-      //Ну и вот тут немного не уверен. Я получаю все записи плюс следующую. Но как именно получить просто следующую пока не понимаю
-      // Отдельно по айди могу получить запись, но как понять какой айди у записы на следующей странице не переходя на неё
       if(paginationData.total_count >= rowsPerPage){
         getEquipmentsData(
           {
-            limit: paginationData.limit + 1, 
-            offset: paginationData.offset, 
-            orders: orderBy === 'name'? { name: order } : { id: order } 
+            limit: 1, 
+            offset: paginationData.offset + paginationData.limit
           }
         );
       }
@@ -230,7 +222,7 @@ export default function EnhancedTable(props) {
         {
           limit: props.paginationData.limit, 
           offset: props.paginationData.offset, 
-          orders: orderBy === 'name'? { name: order } : { id: order }
+          orders: orderBy === 'name' ? { name: isAsc ? 'desc' : 'asc' } : { id: isAsc ? 'desc' : 'asc' }
         }
       )
   };
@@ -308,8 +300,6 @@ export default function EnhancedTable(props) {
           handleClick={handleClick}
           paginationData={props.paginationData}
           rowsPerPage={rowsPerPage}
-          order={order}
-          orderBy={orderBy}
         />
         <TableContainer>
           <Table
@@ -328,6 +318,7 @@ export default function EnhancedTable(props) {
               rowCount={props.paginationData.total_count}
             />
             <TableBody>
+              {console.log(props.paginationData)}
                { rows.map((row, index) => {
                   const isItemSelected = isSelected(row.id);
                   const labelId = `enhanced-table-checkbox-${index}`;

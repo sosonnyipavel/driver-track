@@ -18,6 +18,11 @@ const sortAB = (a, b) => {
 
 export default (state = INITIAL_STATE, action) => {
     if(getEquipmentsRoutine.isSuccessAction(action)){
+        if(action.payload.data.pagination.limit === 1){
+            return ({...state,
+                equipmentsData: state.equipmentsData.concat(action.payload.data.equipments),
+            })
+        }
         return ({...state, 
             equipmentsData: action.payload.data.equipments,
             paginationData: action.payload.data.pagination
@@ -30,10 +35,7 @@ export default (state = INITIAL_STATE, action) => {
                     return equipment.id !== action.payload.id
                 }
             ),
-            paginationData: {
-                count: state.paginationData.count, 
-                limit: state.paginationData.limit, 
-                offset: state.paginationData.offset,
+            paginationData: {...state.paginationData,
                 total_count: state.paginationData.total_count - 1
             }
         });
@@ -56,10 +58,7 @@ export default (state = INITIAL_STATE, action) => {
                 .slice(0, state.equipmentsData.length - 1)
                 .concat(action.payload.data.equipment)
                 .sort( (a, b) => sortAB(a, b) ),
-            paginationData: {
-                count: state.paginationData.count, 
-                limit: state.paginationData.limit, 
-                offset: state.paginationData.offset,
+            paginationData: {...state.paginationData,
                 total_count: state.paginationData.total_count + 1
             }
         });
